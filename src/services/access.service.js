@@ -18,8 +18,8 @@ class AccessService {
   static signUp = async ({ name, email, password }) => {
     try {
       // Check mail exists
-      const hodelShop = await shopModel.findOne({ email }).lean();
-      if (hodelShop) {
+      const modelShop = await shopModel.findOne({ email }).lean();
+      if (modelShop) {
         return {
           code: "xxxx",
           message: "Shop already registered",
