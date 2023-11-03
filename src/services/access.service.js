@@ -25,6 +25,7 @@ class AccessService {
         };
       }
       const passwordHash = await bcrypt.hash(password, 10);
+
       const newShop = await shopModel.create({
         name,
         email,
@@ -45,12 +46,13 @@ class AccessService {
           publicKey,
         });
 
-        if (publicKeyString) {
+        if (!publicKeyString) {
           return {
             code: "xxxx",
             message: "publicKeyString error",
           };
         }
+
         // created token pair
         const tokens = await createTokenPair(
           { userId: newShop._id, email },
@@ -59,6 +61,7 @@ class AccessService {
         );
 
         console.log(`Created Token Success: `, tokens);
+
         return {
           code: 201,
           metadata: {
