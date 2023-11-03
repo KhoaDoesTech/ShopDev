@@ -1,3 +1,4 @@
+require("dotenv").config();
 const compression = require("compression");
 const express = require("express");
 const { default: helmet } = require("helmet");
@@ -11,14 +12,16 @@ app.use(compression());
 
 // init db
 require("./dbs/init.mongodb");
+const { checkOverLoad } = require("./helpers/check.connect");
+// checkOverLoad();
 
 // init routes
 app.get("/", (req, res, next) => {
-    const strCompress = "Hello World";
-    return res.status(200).json({
-        message: "Hello",
-        // metadata: strCompress.repeat(1000),
-    });
+  const strCompress = "Hello World";
+  return res.status(200).json({
+    message: "Hello",
+    // metadata: strCompress.repeat(1000),
+  });
 });
 
 // handling error
