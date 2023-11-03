@@ -1,6 +1,6 @@
 "use strict";
 
-const { model, Schema, Types } = require("mongoose"); // Erase if already required
+const { model, Schema } = require("mongoose"); // Erase if already required
 
 const DOCUMENT_NAME = "Shop";
 const COLLECTION_NAME = "Shops";
