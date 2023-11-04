@@ -24,13 +24,6 @@ const RoleShop = {
 };
 
 class AccessService {
-  /*
-    1 - check email in dbs
-    2 - match password
-    3 - create AT vs RT and save
-    4 - generate tokens
-    5 - get data return login
-  */
   static login = async ({ email, password, refreshToken = null }) => {
     // check email in dbs
     const foundShop = await findByEmail({ email });
@@ -52,9 +45,10 @@ class AccessService {
         format: "pem",
       },
     });
+    const { _id: userId } = foundShop;
 
     const publicKeyString = await KeyTokenService.createKeyToken({
-      userId: foundShop._id,
+      userId,
       publicKey,
     });
 
@@ -64,13 +58,13 @@ class AccessService {
 
     // generate tokens
     const tokens = await createTokenPair(
-      { userId: foundShop._id, email },
+      { userId, email },
       publicKeyString,
       privateKey
     );
 
     await KeyTokenService.createKeyToken({
-      userId: foundShop._id,
+      userId,
       publicKey,
       refreshToken: tokens.refreshToken,
     });
