@@ -1,6 +1,5 @@
 # Shareandcare project
 
-
 #### Key Features:
 - Authentication based on JWT with RSA algorithm
 
