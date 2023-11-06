@@ -4,13 +4,9 @@ const shopModel = require("../models/shop.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const KeyTokenService = require("./keytoken.service");
-const { createTokenPair } = require("../auth/authUtils");
+const { createTokenPair, verifyJWT } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
-const {
-  BadRequestError,
-  ConflictRequestError,
-  AuthFailureError,
-} = require("../core/error.response");
+const { BadRequestError, ConflictRequestError, AuthFailureError, ForbiddenError } = require("../core/error.response");
 
 // service //
 
@@ -24,6 +20,53 @@ const RoleShop = {
 };
 
 class AccessService {
+  static handleRefreshToken = async ({ refreshToken, user, keyStore }) => {
+    const { userId, email } = user;
+
+    if (keyStore.refreshTokensUsed.includes(refreshToken)) {
+      await KeyTokenService.deleteKeyById(userId);
+      throw new ForbiddenError("Something wrong happened! Please relogin");
+    }
+    if (keyStore.refreshToken !== refreshToken) throw new AuthFailureError("Shop not registerd");
+
+    const foundShop = await findByEmail({ email });
+    if (!foundShop) throw new AuthFailureError("Shop not registered");
+
+    const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
+      modulusLength: 4096,
+      publicKeyEncoding: {
+        type: "pkcs1",
+        format: "pem",
+      },
+      privateKeyEncoding: {
+        type: "pkcs1",
+        format: "pem",
+      },
+    });
+    const publicKeyString = await KeyTokenService.createKeyToken({
+      userId,
+      publicKey,
+    });
+    if (!publicKeyString) {
+      throw new BadRequestError("Error: publicKeyString error!");
+    }
+    // create cap moi
+    const tokens = await createTokenPair({ userId, email }, publicKeyString, privateKey);
+    // update
+    await keyStore.updateOne({
+      $set: {
+        refreshToken: tokens.refreshToken,
+      },
+      $addToSet: {
+        refreshTokensUsed: refreshToken,
+      },
+    });
+    return {
+      user,
+      tokens,
+    };
+  };
+
   static logout = async (keyStore) => {
     const delKey = await KeyTokenService.removeKeyById(keyStore._id);
     console.log(delKey);
@@ -63,11 +106,7 @@ class AccessService {
     }
 
     // generate tokens
-    const tokens = await createTokenPair(
-      { userId, email },
-      publicKeyString,
-      privateKey
-    );
+    const tokens = await createTokenPair({ userId, email }, publicKeyString, privateKey);
 
     await KeyTokenService.createKeyToken({
       userId,
@@ -124,11 +163,7 @@ class AccessService {
       }
 
       // created token pair
-      const tokens = await createTokenPair(
-        { userId: newShop._id, email },
-        publicKeyString,
-        privateKey
-      );
+      const tokens = await createTokenPair({ userId: newShop._id, email }, publicKeyString, privateKey);
 
       return {
         code: 201,
