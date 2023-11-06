@@ -4,6 +4,11 @@
 #### Key Features:
 - Authentication based on JWT with RSA algorithm
 
+#### Install packages
+```
+npm install
+```
+
 #### Setup .env file
 ```
 DEV_APP_PORT=
@@ -17,4 +22,9 @@ PRO_DB_PORT=
 PRO_DB_NAME=
 
 NODE_ENV=
+```
+
+#### Start the app
+```
+npm run dev
 ```
