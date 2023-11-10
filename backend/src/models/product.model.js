@@ -14,7 +14,7 @@ const productSchema = new Schema(
     product_slug: String, // quan-jean-cao-cap
     product_price: { type: Number, require: true },
     product_quantity: { type: Number, require: true },
-    product_type: { type: String, require: true, enum: ["Electronics", "Clothing", "Furniture"] },
+    product_type: { type: String, require: true, enum: ["Electronics", "Clothes", "Furniture"] },
     product_shop: { type: Schema.Types.ObjectId, ref: "Shop" },
     product_attributes: { type: Schema.Types.Mixed, required: true },
     product_ratingsAverage: {
