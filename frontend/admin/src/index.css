@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .menu-item {
+      @apply px-4 py-2 hover:bg-gray-400 rounded-lg hover:text-white cursor-pointer;
+    }
+  }

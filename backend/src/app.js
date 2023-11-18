@@ -1,5 +1,6 @@
 require("dotenv").config();
 const compression = require("compression");
+const cors = require('cors');
 const express = require("express");
 const { default: helmet } = require("helmet");
 const morgan = require("morgan");
@@ -15,7 +16,7 @@ app.use(
     extended: true,
   })
 );
-
+app.use(cors());
 // init db
 require("./dbs/init.mongodb");
 // const { checkOverLoad } = require("./helpers/check.connect");

@@ -1,4 +1,4 @@
-@url_dev=http://localhost:3052/v1/api/
+@url_dev=http://localhost:3000/v1/api/
 
 ### signup
 
