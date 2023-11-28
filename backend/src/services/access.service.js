@@ -79,7 +79,7 @@ class AccessService {
     if (!foundShop) throw new BadRequestError("Shop not registered");
 
     // match password
-    const match = bcrypt.compare(password, foundShop.password);
+    const match = await bcrypt.compare(password, foundShop.password);
     if (!match) throw new AuthFailureError("Authentication error");
 
     // create AT vs RT and save

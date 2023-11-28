@@ -5,13 +5,13 @@ import Sidebar from '../components/Sidebar'
 
 function AdminLayout({ children }) {
     return (
-        <div className="flex items-start">
-            <Sidebar />
-            <div className="w-full">
-                <Header />
-                <main className="w-full h-full min-h-screen">{children}</main>
-                <Footer />
+        <div className="w-screen h-screen box-border">
+            <Header />
+            <div className="flex items-center h-full">
+                <Sidebar />
+                <main className="w-full min-h-screen">{children}</main>
             </div>
+            <Footer />
         </div>
     )
 }

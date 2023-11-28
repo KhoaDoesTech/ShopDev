@@ -1,0 +1,1 @@
+export const clothSize = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];

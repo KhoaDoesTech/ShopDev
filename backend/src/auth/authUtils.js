@@ -42,10 +42,11 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
 const authentication = asyncHandler(async (req, res, next) => {
   // check userId missing
   const userId = req.headers[HEADER.CLIENT_ID];
+  console.log(userId);
   if (!userId) throw new AuthFailureError("Invalid Request");
 
-  // get accessToken
-  const keyStore = await findByUserId(userId);
+  // get accessTokenserI
+  const keyStore = await findByUserId(ud);
   if (!keyStore) throw new NotFoundError("Not found keyStore");
 
   // verify Token

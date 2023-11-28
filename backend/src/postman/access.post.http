@@ -2,12 +2,12 @@
 
 ### signup
 
-POST {{url_dev}}/shop/signup
+POST {{url_dev}}/shop/login
 Content-Type: application/json
 x-api-key: df34bb52bbf8e41abf7e40b74fb2cb4a4dbcef732784294f4a1b29bea1067e995fcda13be56637bfccbe34f373a23f9792eea7183e43724cb3d8e572c8f731b0
-
+body: 
 {
-  "name": "Khoa Shop 3",
-  "email": "khoa04@gmail.com",
+  "name": "Quoc Lan store",
+  "email": "ydf512003@gmail.com",
   "password": "abc123"
 }
