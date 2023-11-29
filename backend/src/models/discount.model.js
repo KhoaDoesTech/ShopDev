@@ -18,6 +18,7 @@ const discountSchema = new Schema(
     discount_type: { type: String, default: "fixed_amount" }, // percentage
     discount_value: { type: Number, require: true }, // 10000 , 10
     discount_min_order_values: { type: Number, require: true },
+    discount_max_value: { type: Number, require: true },
     discount_max_uses: { type: Number, require: true }, // Số lượng discount tối đa
     discount_max_uses_per_user: { type: Number, require: true }, // Mỗi user được sử dụng tối đa bn discount
     // Hiển thị mã giảm giá
