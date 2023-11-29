@@ -2,6 +2,8 @@
 
 #### Key Features:
 - Authentication based on JWT with RSA algorithm
+- Discount Services
+- Product Services
 
 #### Install packages
 ```
