@@ -4,6 +4,7 @@ const { BadRequestError, NotFoundError } = require("../core/error.response");
 const { checkCartExists, createUserCart, updateUserCartQuantity } = require("../models/repositories/cart.repo");
 const cart = require("../models/cart.model");
 const { getProductById } = require("../models/repositories/product.repo");
+
 class CartService {
   static async addToCart({ userId, product = {} }) {
     // check cart exist
