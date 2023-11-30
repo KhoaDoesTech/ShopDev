@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { clothSize } from '../constants';
 import storage from "../firebase";
-import { createNewProduct, updateProduct } from '../services/product';
+import { createNewProduct, updateProduct, publishProduct } from '../services/product';
 import { getCurrentDateAsString } from '../utils';
 const ProductForm = ({ record, isEditForm, methods }) => {
     const [messageApi, contextHolder] = message.useMessage();
@@ -16,15 +16,15 @@ const ProductForm = ({ record, isEditForm, methods }) => {
     const handleReset = () => {
         reset();
     };
-    useEffect(()=>{
-        if(record){
+    useEffect(() => {
+        if (record) {
             for (const [key, value] of Object.entries(record)) {
                 setValue(key, value);
-              }
+            }
         } else {
             reset()
         }
-    },[record, isEditForm])
+    }, [record, isEditForm])
     // console.log({record, values, isEditForm})
     const onSubmit = (data) => {
         const { product_thumb } = data;
@@ -48,29 +48,28 @@ const ProductForm = ({ record, isEditForm, methods }) => {
                     try {
                         const url = await getDownloadURL(uploadTask.snapshot.ref);
                         const product = { ...data, product_thumb: url }
-                        console.log({url})
-                        if(url){
-                            const response = isEditForm ? await updateProduct(product._id, product) : await createNewProduct(product)
-                            console.log({response})
-                            resolve(url);
-                            onCloseModal(true)
+                        console.log({ url })
+                        if (url) {
                             const key = 'creating';
                             messageApi.open({
                                 key,
                                 type: 'loading',
                                 content: 'Đang xử lý...',
                             });
+                            const response = isEditForm ? await updateProduct(product._id, product) : await createNewProduct(product)
+                            console.log({ response })
+                            resolve(url);
                             if (response.statusText === "OK") {
                                 messageApi.open({
                                     key,
                                     type: 'success',
-                                    content: isEditForm ? 'Cập nhật sản phẩM thành công': 'Tạo sản phẩm mới thành công!',
+                                    content: isEditForm ? 'Cập nhật sản phẩm thành công' : 'Tạo sản phẩm mới thành công!',
                                     duration: 3,
                                 });
+                                const publishResponse = await publishProduct(response.data.metadata._id, product)
+                                console.log({ publishResponse })
                             }
-                        }                       
-                        
-
+                        }
                     }
                     catch (error) {
                         console.log("Error getting download url")

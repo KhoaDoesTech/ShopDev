@@ -18,8 +18,13 @@ export const ProductEndpoint = {
     data
   }),
   deleteProduct: (id, data) => ({
-    url: `/product/${id}`,
-    method: "PATCH",
+    url: `/product/unpublish/${id}`,
+    method: "POST",
+    data
+  }),
+  publishProduct: (id, data) => ({
+    url: `/product/publish/${id}`,
+    method: "POST",
     data
   })
 };

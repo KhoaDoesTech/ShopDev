@@ -9,7 +9,7 @@ const COLLECTION_NAME = "Products";
 const productSchema = new Schema(
   {
     product_name: { type: String, required: true }, // quan jean cao cap
-    product_thumb: { type: String, required: true },
+    product_thumb: { type: String, required: true, default: process.env.DEFAULT_IMAGE },
     product_description: String,
     product_slug: String, // quan-jean-cao-cap
     product_price: { type: Number, require: true },
@@ -26,7 +26,7 @@ const productSchema = new Schema(
     },
     product_variations: { type: Array, default: [] },
     isDraft: { type: Boolean, default: true, index: true, select: false },
-    isPublished: { type: Boolean, default: false, index: true, select: false },
+    isPublished: { type: Boolean, default: true, index: true},
   },
   {
     collection: COLLECTION_NAME,

@@ -11,3 +11,13 @@ export const login = async (body) => {
       return [];
     }
   };
+export const signup = async (body) => {
+  try {
+    const authResponse = await axiosClient.request(AuthEndpoint.signup(body));
+    return authResponse.data;
+    
+  } catch (err) {
+    console.log("Error fetching ")
+    return [];
+  }
+};

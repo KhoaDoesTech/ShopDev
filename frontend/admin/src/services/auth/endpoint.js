@@ -4,4 +4,9 @@ export const AuthEndpoint = {
     method: "POST",
     data,
   }),
+  signup: (data) => ({
+    url: "/shop/signup",
+    method: "POST",
+    data,
+  }),
 };

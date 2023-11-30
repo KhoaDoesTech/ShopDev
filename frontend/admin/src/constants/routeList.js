@@ -15,6 +15,11 @@ export const routes = [
     label: "Product",
   },
   {
+    // element: <NotPublished />,
+    path: "/nopublished",
+    label: "Not Published",
+  },
+  {
     // element: <Order />,
     path: "/order",
     label: "Order",

@@ -13,8 +13,22 @@ const findAllProducts = async () => {
       return [];
     }
   };
+const findAllDeletedProducts = async () => {
+  try {
+    const productResponse = await axiosClient.request(ProductEndpoint.findAllDeleted);
+    return productResponse.data;
+    
+  } catch (err) {
+    console.log("Error fetching")
+    console.log(err)
+    return [];
+  }
+};
 export const useFindAllProduct =  () => {
   return useQuery({ queryKey: ['findAllProducts'], queryFn: findAllProducts, staleTime: 1000, refetchInterval: 10000})
+}
+export const useFindAllDeletedProducts = () => {
+  return useQuery({ queryKey: ['findAllDeletedProducts'], queryFn: findAllDeletedProducts, staleTime: 1000, refetchInterval: 10000})
 }
 export const createNewProduct = async (payload) => {
   try {
@@ -34,7 +48,7 @@ export const updateProduct = async (id, payload) => {
     console.log(err)
     return [];
   }
-}
+};
 export const deleteProduct = async (id, payload) => {
   try{
     const productResponse = await axiosClient.request(ProductEndpoint.deleteProduct(id, {...payload, isPublished: false}));
@@ -43,4 +57,13 @@ export const deleteProduct = async (id, payload) => {
     console.log(err)
     return [];
   }
-}
+};
+export const publishProduct = async (id, payload) => {
+  try{
+    const productResponse = await axiosClient.request(ProductEndpoint.publishProduct(id, {...payload, isPublished: true}));
+    return productResponse;
+  }catch(error){
+    console.log(err)
+    return [];
+  }
+};

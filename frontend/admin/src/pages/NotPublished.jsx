@@ -6,18 +6,18 @@ import { MdModeEdit } from "react-icons/md";
 import ProductForm from '../components/ProductForm';
 import Table from '../components/Table';
 import AdminLayout from '../layout';
-import { deleteProduct, useFindAllProduct } from "../services/product";
+import { deleteProduct, useFindAllDeletedProducts} from "../services/product";
 import { displayCurrencyVND } from '../utils';
 import Loading from '../components/Loading';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
-const Product = () => {
+const NotPublished = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isEditForm, setIsEditForm] = useState(false);
   const [product, setProduct] = useState(null)
-  const { data: products, isLoading } = useFindAllProduct()
+  const { data: products, isLoading } = useFindAllDeletedProducts()
   const handleCancel = () => {
     setModalOpen(false);
     setIsEditForm(false)
@@ -104,10 +104,7 @@ const Product = () => {
     <AdminLayout>
       {contextHolder}
       <div className='m-8 h-full'>
-        <h1 className="font-bold text-3xl p-4">Danh mục sản phẩm</h1>
-        <button className="bg-gray-800 rounded-md px-4 py-2 text-white mb-4 flex items-center gap-x-2" onClick={() => { setModalOpen(true); setIsEditForm(false) }}>
-          <FaPlus />
-          <span>Tạo sản phẩm mới</span></button>
+        <h1 className="font-bold text-3xl p-4">Sản phẩm chưa mở bán</h1>
         {isLoading ? <Loading /> : <Table data={products.metadata} columns={columns} />} 
       </div>
       <Modal title={<span>Xóa <strong>{isEditForm && product.product_name}</strong> hả?</span>} open={deleteModalOpen} onCancel={handleDeletePopupCancel} className='w-[10vw] h-[10vw]'
@@ -127,4 +124,4 @@ const Product = () => {
   )
 }
 
-export default Product
+export default NotPublished

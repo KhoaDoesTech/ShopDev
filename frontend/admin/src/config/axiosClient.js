@@ -11,7 +11,7 @@ const axiosClient = axios.create({
     },
   });
 axiosClient.interceptors.request.use((config) => {
-  if(token !== null){
+  if(token != null){
     config.headers = {
       "Content-type": "application/json",
       "Access-Control-Allow-Origin": "*",
