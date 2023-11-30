@@ -20,7 +20,7 @@ class CartService {
     // If have cart but not have product
     if (!foundCart.cart_products.length) {
       foundCart.cart_products = [product];
-      return await foundCart.save();
+      return await foundCart;
     }
 
     // Have product
