@@ -1,11 +1,6 @@
 "use strict";
 
-const { getSelectData, unGetSelectData } = require("../../utils");
-const { cart } = require("../cart.model");
-
-const checkCartExists = async ({ model, filter }) => {
-  return await model.findOne(filter).lean();
-};
+const cart = require("../cart.model");
 
 const createUserCart = async ({ userId, product }) => {
   const query = { cart_userId: userId, cart_state: "active" },
@@ -23,7 +18,7 @@ const updateUserCartQuantity = async ({ userId, product }) => {
   const { productId, quantity } = product;
   const query = {
       cart_userId: userId,
-      "cart_product.productId": productId,
+      "cart_products.productId": productId,
       cart_state: "active",
     },
     updateSet = {
@@ -34,6 +29,10 @@ const updateUserCartQuantity = async ({ userId, product }) => {
     options = { upsert: true, new: true };
 
   return await cart.findOneAndUpdate(query, updateSet, options);
+};
+
+const checkCartExists = async ({ model, filter }) => {
+  return await model.findOne(filter).lean();
 };
 
 module.exports = {
