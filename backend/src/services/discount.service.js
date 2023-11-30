@@ -40,7 +40,7 @@ class DiscountService {
 
     const foundDiscount = await checkDiscountExists({
       model: discount,
-      filer: {
+      filter: {
         discount_code: code,
         discount_shopId: convertToObjectIdMongodb(shopId),
       },
@@ -77,9 +77,10 @@ class DiscountService {
 
   // Get all discount codes available with product (User)
   static async getAllDiscountCodesWithProduct({ codeId, shopId, userId, limit, page }) {
+    console.log(codeId);
     const foundDiscount = await checkDiscountExists({
       model: discount,
-      filer: {
+      filter: {
         discount_code: codeId,
         discount_shopId: convertToObjectIdMongodb(shopId),
       },
@@ -141,7 +142,7 @@ class DiscountService {
   static async getDiscountAmount({ codeId, userId, shopId, products }) {
     const foundDiscount = await checkDiscountExists({
       model: discount,
-      filer: {
+      filter: {
         discount_code: codeId,
         discount_shopId: convertToObjectIdMongodb(shopId),
       },
@@ -159,6 +160,7 @@ class DiscountService {
       discount_users_used,
       discount_type,
       discount_value,
+      discount_max_value,
     } = foundDiscount;
 
     if (!discount_is_active) throw new NotFoundError("Discount not active!");
@@ -182,12 +184,19 @@ class DiscountService {
 
     if (discount_max_uses_per_user > 0) {
       const usersUsedDiscount = discount_users_used.find((user) => user.userId == userId);
+      console.log(usersUsedDiscount, discount_max_uses_per_user);
       if (usersUsedDiscount > discount_max_uses_per_user) {
         throw new BadRequestError(`Discount just used ${discount_max_uses_per_user}`);
       }
     }
 
-    const amount = discount_type === "fixed_amount" ? discount_value : totalOrder * (discount_value / 100);
+    let amount = 0;
+    if (discount_type === "fixed_amount") {
+      amount = discount_value;
+    } else {
+      amount = totalOrder * (discount_value / 100);
+      amount = amount > discount_max_value ? discount_max_value : amount;
+    }
 
     return {
       totalOrder,
@@ -210,7 +219,7 @@ class DiscountService {
   static async cancelDiscountCode({ shopId, codeId, userId }) {
     const foundDiscount = await checkDiscountExists({
       model: discount,
-      filer: {
+      filter: {
         discount_code: codeId,
         discount_shopId: convertToObjectIdMongodb(shopId),
       },

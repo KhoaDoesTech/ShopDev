@@ -1,7 +1,7 @@
 "use strict";
 
-const { model, models } = require("mongoose");
 const { getSelectData, unGetSelectData } = require("../../utils");
+const { discount } = require("../discount.model");
 
 const findAllDiscountCodeUnSelect = async ({ limit = 50, page = 1, sort = "ctime", filter, unSelect, model }) => {
   const skip = (page - 1) * limit;
@@ -25,7 +25,7 @@ const findAllDiscountCodeSelect = async ({ limit = 50, page = 1, sort = "ctime",
   return documents;
 };
 
-const checkDiscountExists = async (model, filter) => {
+const checkDiscountExists = async ({ model, filter }) => {
   return await model.findOne(filter).lean();
 };
 
