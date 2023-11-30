@@ -17,18 +17,24 @@ const ProductForm = ({ record, isEditForm, methods }) => {
         reset();
     };
     useEffect(() => {
-        if (record) {
+        if (record && !isEditForm) {
+            reset()
+        } else if (record) {
             for (const [key, value] of Object.entries(record)) {
                 setValue(key, value);
             }
-        } else {
-            reset()
         }
     }, [record, isEditForm])
-    // console.log({record, values, isEditForm})
+    console.log({ record, values, isEditForm })
     const onSubmit = (data) => {
+        const key = 'creating';
+        messageApi.open({
+            key,
+            type: 'loading',
+            content: 'Đang xử lý...',
+            duration: 3
+        });
         const { product_thumb } = data;
-
         const storageRef = ref(storage, `/products/product-${getCurrentDateAsString()}`);
         const uploadTask = uploadBytesResumable(storageRef, product_thumb);
         new Promise((resolve, reject) => {
@@ -46,28 +52,33 @@ const ProductForm = ({ record, isEditForm, methods }) => {
                 },
                 async () => {
                     try {
-                        const url = await getDownloadURL(uploadTask.snapshot.ref);
-                        const product = { ...data, product_thumb: url }
+                        if (isEditForm) {
+                            var url = record.product_thumb
+                        }
+                        else {
+                            var url = await getDownloadURL(uploadTask.snapshot.ref)
+                        }
                         console.log({ url })
+                        const product = { ...data, product_thumb: url }
                         if (url) {
-                            const key = 'creating';
-                            messageApi.open({
-                                key,
-                                type: 'loading',
-                                content: 'Đang xử lý...',
-                            });
+                            console.log({product})
                             const response = isEditForm ? await updateProduct(product._id, product) : await createNewProduct(product)
                             console.log({ response })
                             resolve(url);
                             if (response.statusText === "OK") {
+                                const keyNoti = 'notify'
                                 messageApi.open({
-                                    key,
+                                    keyNoti,
                                     type: 'success',
                                     content: isEditForm ? 'Cập nhật sản phẩm thành công' : 'Tạo sản phẩm mới thành công!',
                                     duration: 3,
                                 });
-                                const publishResponse = await publishProduct(response.data.metadata._id, product)
-                                console.log({ publishResponse })
+                                if (!isEditForm) {
+                                    const publishResponse = await publishProduct(response.data.metadata._id, product)
+                                    console.log({ publishResponse })
+                                    reset()
+                                }
+                                methods.setModalOpen(false)
                             }
                         }
                     }
@@ -75,7 +86,6 @@ const ProductForm = ({ record, isEditForm, methods }) => {
                         console.log("Error getting download url")
                         reject(error);
                     }
-
                 }
             );
         })

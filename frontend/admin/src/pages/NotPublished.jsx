@@ -1,12 +1,12 @@
 import { Modal, message } from 'antd';
 import React, { useState } from 'react';
-import { BsTrash3Fill } from "react-icons/bs";
+import { BsArrow90DegLeft } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa6";
 import { MdModeEdit } from "react-icons/md";
 import ProductForm from '../components/ProductForm';
 import Table from '../components/Table';
 import AdminLayout from '../layout';
-import { deleteProduct, useFindAllDeletedProducts} from "../services/product";
+import { publishProduct, useFindAllDeletedProducts } from "../services/product";
 import { displayCurrencyVND } from '../utils';
 import Loading from '../components/Loading';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
@@ -22,25 +22,25 @@ const NotPublished = () => {
     setModalOpen(false);
     setIsEditForm(false)
   };
-  const handleDeletePopupCancel = () => {
+  const handlePublishPopupCancel = () => {
     setDeleteModalOpen(false);
     setIsEditForm(false)
   };
-  const handleDeleteProduct = async (product) => {
-    handleDeletePopupCancel();
+  const handlePublishProduct = async (product) => {
+    handlePublishPopupCancel();
     const key = 'delete';
     messageApi.open({
       key,
       type: 'loading',
-      content: 'Đang xóa...',
+      content: 'Đang xử lý mở bản...',
     });
-    const response = await deleteProduct(product._id, product);
-    console.log({response})
+    const response = await publishProduct(product._id, product);
+    console.log({ response })
     setTimeout(() => {
       messageApi.open({
         key,
         type: 'success',
-        content: 'Đã xóa ' + product.product_name + ' thành công!',
+        content: 'Đã mở bán ' + product.product_name + ' thành công!',
         duration: 3,
       });
     }, 1500);
@@ -52,7 +52,7 @@ const NotPublished = () => {
       dataIndex: 'product_thumb',
       key: 'product_thumb',
       render: (image) => <img src={image} className="h-28 object-contain" />,
-      width: 200
+      width: 150
     },
     {
       title: 'Tên sản phẩm',
@@ -64,7 +64,7 @@ const NotPublished = () => {
       title: 'Giá',
       dataIndex: 'product_price',
       key: 'product_price',
-      width: 300,
+      width: 200,
       render: (_, record) => <span>{displayCurrencyVND(record.product_price)}</span>
     },
     {
@@ -81,45 +81,38 @@ const NotPublished = () => {
     {
       title: 'Thao tác',
       key: 'action',
-      width: 100,
+      width: 200,
       render: (_, record) => (
-        <div className="flex items-center gap-x-4">
-          <MdModeEdit onClick={() => {
-            setModalOpen(true);
-            setIsEditForm(true);
-            setProduct(record)
-          }} className='cursor-pointer hover:text-red-500 hover:scale-105' />
-          <BsTrash3Fill onClick={() => {
+        <div className='py-1'>
+          <BsArrow90DegLeft onClick={() => {
             setDeleteModalOpen(true);
             setIsEditForm(true);
             setProduct(record)
-          }} className='cursor-pointer hover:text-red-500 hover:scale-105' />
+          }} className='cursor-pointer hover:text-red-500 hover:scale-105 inline-block' />
+          <p className='inline-block px-2'>Mở bán sản phẩm</p>
         </div>
       ),
     },
   ];
 
- 
+
   return (
     <AdminLayout>
       {contextHolder}
       <div className='m-8 h-full'>
         <h1 className="font-bold text-3xl p-4">Sản phẩm chưa mở bán</h1>
-        {isLoading ? <Loading /> : <Table data={products.metadata} columns={columns} />} 
+        {isLoading ? <Loading /> : <Table data={products.metadata} columns={columns} />}
       </div>
-      <Modal title={<span>Xóa <strong>{isEditForm && product.product_name}</strong> hả?</span>} open={deleteModalOpen} onCancel={handleDeletePopupCancel} className='w-[10vw] h-[10vw]'
+      <Modal title={<span>Mở bán <strong>{isEditForm && product.product_name}</strong> hả?</span>} open={deleteModalOpen} onCancel={handlePublishPopupCancel} className='w-[10vw] h-[10vw]'
         footer={[
           <button
-            onClick={handleDeletePopupCancel}
+            onClick={handlePublishPopupCancel}
             className="px-4 py-1 rounded-md bg-white border text-red-500 border-red-500 mr-2">Hủy</button>,
           <button
-            onClick={() => handleDeleteProduct(product)}
-            className="px-4 py-1 rounded-md bg-red-500 text-white">OK</button>
+            onClick={() => handlePublishProduct(product)}
+            className="px-4 py-1 rounded-md bg-green-500 text-white">OK</button>
         ]}
       ></Modal>
-      <Modal title={<h1 className="text-3xl font-bold">{isEditForm ? product.product_name : "Thêm sản phẩm"}</h1>} open={modalOpen} footer={null} onCancel={handleCancel} className='min-w-[50vw]'>
-        <ProductForm record={product} isEditForm={isEditForm}/>
-      </Modal>
     </AdminLayout>
   )
 }

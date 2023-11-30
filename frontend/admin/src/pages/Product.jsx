@@ -35,7 +35,7 @@ const Product = () => {
       content: 'Đang xóa...',
     });
     const response = await deleteProduct(product._id, product);
-    console.log({response})
+    console.log({ response })
     setTimeout(() => {
       messageApi.open({
         key,
@@ -52,7 +52,7 @@ const Product = () => {
       dataIndex: 'product_thumb',
       key: 'product_thumb',
       render: (image) => <img src={image} className="h-28 object-contain" />,
-      width: 200
+      width: 150
     },
     {
       title: 'Tên sản phẩm',
@@ -64,7 +64,7 @@ const Product = () => {
       title: 'Giá',
       dataIndex: 'product_price',
       key: 'product_price',
-      width: 300,
+      width: 200,
       render: (_, record) => <span>{displayCurrencyVND(record.product_price)}</span>
     },
     {
@@ -81,25 +81,31 @@ const Product = () => {
     {
       title: 'Thao tác',
       key: 'action',
-      width: 100,
+      width: 200,
       render: (_, record) => (
-        <div className="flex items-center gap-x-4">
-          <MdModeEdit onClick={() => {
-            setModalOpen(true);
-            setIsEditForm(true);
-            setProduct(record)
-          }} className='cursor-pointer hover:text-red-500 hover:scale-105' />
-          <BsTrash3Fill onClick={() => {
-            setDeleteModalOpen(true);
-            setIsEditForm(true);
-            setProduct(record)
-          }} className='cursor-pointer hover:text-red-500 hover:scale-105' />
+        <div className="items-center">
+          <div className='py-1'>
+            <MdModeEdit onClick={() => {
+              setModalOpen(true);
+              setIsEditForm(true);
+              setProduct(record)
+            }} className='cursor-pointer hover:text-red-500 hover:scale-105 inline-block' />
+            <p className='inline-block px-2'>Chỉnh sửa</p>
+          </div>
+          <div>
+            <BsTrash3Fill onClick={() => {
+              setDeleteModalOpen(true);
+              setIsEditForm(true);
+              setProduct(record)
+            }} className='cursor-pointer hover:text-red-500 hover:scale-105 inline-block' />
+            <p className='inline-block px-2'>Xóa sản phẩm</p>
+          </div>
         </div>
       ),
     },
   ];
 
- 
+
   return (
     <AdminLayout>
       {contextHolder}
@@ -108,7 +114,7 @@ const Product = () => {
         <button className="bg-gray-800 rounded-md px-4 py-2 text-white mb-4 flex items-center gap-x-2" onClick={() => { setModalOpen(true); setIsEditForm(false) }}>
           <FaPlus />
           <span>Tạo sản phẩm mới</span></button>
-        {isLoading ? <Loading /> : <Table data={products.metadata} columns={columns} />} 
+        {isLoading ? <Loading /> : <Table data={products.metadata} columns={columns} />}
       </div>
       <Modal title={<span>Xóa <strong>{isEditForm && product.product_name}</strong> hả?</span>} open={deleteModalOpen} onCancel={handleDeletePopupCancel} className='w-[10vw] h-[10vw]'
         footer={[
@@ -120,8 +126,14 @@ const Product = () => {
             className="px-4 py-1 rounded-md bg-red-500 text-white">OK</button>
         ]}
       ></Modal>
-      <Modal title={<h1 className="text-3xl font-bold">{isEditForm ? product.product_name : "Thêm sản phẩm"}</h1>} open={modalOpen} footer={null} onCancel={handleCancel} className='min-w-[50vw]'>
-        <ProductForm record={product} isEditForm={isEditForm}/>
+      <Modal
+        title={<h1 className="text-3xl font-bold">{isEditForm ? product.product_name : "Thêm sản phẩm"}</h1>}
+        open={modalOpen}
+        footer={null}
+        onCancel={handleCancel}
+        className='min-w-[50vw]'
+      >
+        <ProductForm record={product} isEditForm={isEditForm} methods={{ setModalOpen }} />
       </Modal>
     </AdminLayout>
   )
