@@ -16,9 +16,15 @@ const findByEmail = async ({
 };
 
 const createNewRole = async ({ foundUser, role }) => {
-  foundUser.roles.push(role);
+  const query = { email: foundUser.email },
+    updateOrInsert = {
+      $addToSet: {
+        roles: role,
+      },
+    },
+    options = { upsert: true, new: true };
 
-  return await foundUser;
+  return await user.findOneAndUpdate(query, updateOrInsert, options);
 };
 
 module.exports = {

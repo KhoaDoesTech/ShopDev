@@ -4,13 +4,13 @@ const user = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const KeyTokenService = require("./keytoken.service");
-const { createTokenPair, verifyJWT } = require("../auth/authUtils");
+const { createTokenPair } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
-const { BadRequestError, ConflictRequestError, AuthFailureError, ForbiddenError } = require("../core/error.response");
+const { BadRequestError, AuthFailureError, ForbiddenError } = require("../core/error.response");
 
 // service //
 
-const { findByEmail } = require("../models/repositories/user.repo");
+const { findByEmail, createNewRole } = require("../models/repositories/user.repo");
 
 const RoleShop = {
   SHOP: "SHOP",
@@ -83,7 +83,7 @@ class AccessService {
     const match = await bcrypt.compare(password, foundUser.password);
     if (!match) throw new AuthFailureError("Authentication error");
 
-    if (!foundUser.roles.includes(role)) throw new BadRequestError("You dont have permission");
+    if (!foundUser.roles.includes(role)) throw new ForbiddenError("You dont have permission");
 
     // create AT vs RT and save
     const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
@@ -132,30 +132,24 @@ class AccessService {
     const isInvalidInput = !(role in RoleShop);
     if (isInvalidInput) throw new BadRequestError("Dont have that role");
 
+    let newUser;
     // Check mail exists
     const foundUser = await findByEmail({ email });
     if (foundUser) {
       if (foundUser.roles.includes(role)) throw new BadRequestError("Error: Shop already registered!");
+      newUser = await createNewRole({ foundUser, role });
+      console.log(newUser);
+    } else {
+      // Create account
+      const passwordHash = await bcrypt.hash(password, 10);
 
-      createNewRole({ foundUser, role });
-      return {
-        user: getInfoData({
-          fields: ["_id", "name", "email"],
-          object: foundUser,
-        }),
-        tokens,
-      };
+      newUser = await user.create({
+        name,
+        email,
+        password: passwordHash,
+        roles: [role],
+      });
     }
-
-    // Create account
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    const newUser = await user.create({
-      name,
-      email,
-      password: passwordHash,
-      roles: [role],
-    });
 
     if (newUser) {
       // created privateKey, publicKey
