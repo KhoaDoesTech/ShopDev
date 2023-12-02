@@ -1,22 +1,20 @@
 "use strict";
 
-const shopModel = require("../models/shop.model");
+const user = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const KeyTokenService = require("./keytoken.service");
-const { createTokenPair, verifyJWT } = require("../auth/authUtils");
+const { createTokenPair } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
-const { BadRequestError, ConflictRequestError, AuthFailureError, ForbiddenError } = require("../core/error.response");
+const { BadRequestError, AuthFailureError, ForbiddenError } = require("../core/error.response");
 
 // service //
 
-const { findByEmail } = require("./shop.service");
+const { findByEmail, createNewRole } = require("../models/repositories/user.repo");
 
 const RoleShop = {
   SHOP: "SHOP",
-  WRITER: "WRITER",
-  EDITOR: "EDITOR",
-  ADMIN: "ADMIN",
+  USER: "USER",
 };
 
 class AccessService {
@@ -69,18 +67,23 @@ class AccessService {
 
   static logout = async (keyStore) => {
     const delKey = await KeyTokenService.removeKeyById(keyStore._id);
-    console.log(delKey);
     return delKey;
   };
 
-  static login = async ({ email, password, refreshToken = null }) => {
+  static login = async ({ email, password, refreshToken = null, role }) => {
+    // Check input
+    const isInvalidInput = !(role in RoleShop);
+    if (isInvalidInput) throw new BadRequestError("Dont have that role");
+
     // check email in dbs
-    const foundShop = await findByEmail({ email });
-    if (!foundShop) throw new BadRequestError("Shop not registered");
+    const foundUser = await findByEmail({ email });
+    if (!foundUser) throw new BadRequestError("Shop not registered");
 
     // match password
-    const match = await bcrypt.compare(password, foundShop.password);
+    const match = await bcrypt.compare(password, foundUser.password);
     if (!match) throw new AuthFailureError("Authentication error");
+
+    if (!foundUser.roles.includes(role)) throw new ForbiddenError("You dont have permission");
 
     // create AT vs RT and save
     const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
@@ -94,7 +97,7 @@ class AccessService {
         format: "pem",
       },
     });
-    const { _id: userId } = foundShop;
+    const { _id: userId } = foundUser;
 
     const publicKeyString = await KeyTokenService.createKeyToken({
       userId,
@@ -118,28 +121,37 @@ class AccessService {
     return {
       shop: getInfoData({
         fields: ["_id", "name", "email"],
-        object: foundShop,
+        object: foundUser,
       }),
       tokens,
     };
   };
 
-  static signUp = async ({ name, email, password }) => {
+  static signUp = async ({ name, email, password, role }) => {
+    // Check input
+    const isInvalidInput = !(role in RoleShop);
+    if (isInvalidInput) throw new BadRequestError("Dont have that role");
+
+    let newUser;
     // Check mail exists
-    const modelShop = await shopModel.findOne({ email }).lean();
-    if (modelShop) {
-      throw new BadRequestError("Error: Shop already registered!");
+    const foundUser = await findByEmail({ email });
+    if (foundUser) {
+      if (foundUser.roles.includes(role)) throw new BadRequestError("Error: Shop already registered!");
+      newUser = await createNewRole({ foundUser, role });
+      console.log(newUser);
+    } else {
+      // Create account
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      newUser = await user.create({
+        name,
+        email,
+        password: passwordHash,
+        roles: [role],
+      });
     }
-    const passwordHash = await bcrypt.hash(password, 10);
 
-    const newShop = await shopModel.create({
-      name,
-      email,
-      password: passwordHash,
-      roles: [RoleShop.SHOP],
-    });
-
-    if (newShop) {
+    if (newUser) {
       // created privateKey, publicKey
       const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
         modulusLength: 4096,
@@ -154,7 +166,7 @@ class AccessService {
       });
 
       const publicKeyString = await KeyTokenService.createKeyToken({
-        userId: newShop._id,
+        userId: newUser._id,
         publicKey,
       });
 
@@ -163,14 +175,14 @@ class AccessService {
       }
 
       // created token pair
-      const tokens = await createTokenPair({ userId: newShop._id, email }, publicKeyString, privateKey);
+      const tokens = await createTokenPair({ userId: newUser._id, email }, publicKeyString, privateKey);
 
       return {
         code: 201,
         metadata: {
           shop: getInfoData({
             fields: ["_id", "name", "email"],
-            object: newShop,
+            object: newUser,
           }),
           tokens,
         },
