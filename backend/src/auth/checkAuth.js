@@ -2,7 +2,7 @@
 
 const asyncHandler = require("../helpers/asyncHandler");
 const { findByEmail } = require("../models/repositories/user.repo");
-const { findById } = require("../services/apikey.service");
+const { findById } = require("../models/repositories/apikey.repo");
 
 const HEADER = {
   API_KEY: "x-api-key",
