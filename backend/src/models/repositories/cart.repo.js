@@ -36,8 +36,13 @@ const checkCartExists = async ({ model, filter }) => {
   return await model.findOne(filter).lean();
 };
 
+const findCartById = async (cartId) => {
+  return await cart.findOne({ _id: convertToObjectIdMongodb(cartId), cart_state: "active" }).lean();
+};
+
 module.exports = {
   checkCartExists,
   createUserCart,
   updateUserCartQuantity,
+  findCartById,
 };
