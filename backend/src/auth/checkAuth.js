@@ -1,5 +1,7 @@
 "use strict";
 
+const asyncHandler = require("../helpers/asyncHandler");
+const { findByEmail } = require("../models/repositories/user.repo");
 const { findById } = require("../services/apikey.service");
 
 const HEADER = {
@@ -45,7 +47,27 @@ const permission = (permission) => {
   };
 };
 
+const authPage = (role) => {
+  return asyncHandler(async (req, res, next) => {
+    const userRole = await findByEmail({ email: req.user.email, select: ["roles"] });
+    if (!userRole) {
+      return res.status(403).json({
+        message: "Role Denied",
+      });
+    }
+
+    const validRole = userRole.roles.every((item) => role.includes(item));
+    if (!validRole) {
+      return res.status(403).json({
+        message: "Role Denied",
+      });
+    }
+    return next();
+  });
+};
+
 module.exports = {
   apiKey,
   permission,
+  authPage,
 };

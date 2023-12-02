@@ -1,9 +1,10 @@
 "use strict";
 
 const cart = require("../cart.model");
+const { convertToObjectIdMongodb } = require("../../utils/index");
 
 const createUserCart = async ({ userId, product }) => {
-  const query = { cart_userId: userId, cart_state: "active" },
+  const query = { cart_userId: convertToObjectIdMongodb(userId), cart_state: "active" },
     updateOrInsert = {
       $addToSet: {
         cart_products: product,
@@ -17,7 +18,7 @@ const createUserCart = async ({ userId, product }) => {
 const updateUserCartQuantity = async ({ userId, product }) => {
   const { productId, quantity } = product;
   const query = {
-      cart_userId: userId,
+      cart_userId: convertToObjectIdMongodb(userId),
       "cart_products.productId": productId,
       cart_state: "active",
     },

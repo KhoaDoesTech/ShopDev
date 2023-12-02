@@ -15,7 +15,7 @@ const productSchema = new Schema(
     product_price: { type: Number, require: true },
     product_quantity: { type: Number, require: true },
     product_type: { type: String, require: true, enum: ["Electronics", "Clothes", "Furniture"] },
-    product_shop: { type: Schema.Types.ObjectId, ref: "Shop" },
+    product_shop: { type: Schema.Types.ObjectId, ref: "User" },
     product_attributes: { type: Schema.Types.Mixed, required: true },
     product_ratingsAverage: {
       type: Number,
@@ -49,7 +49,7 @@ const clothingSchema = new Schema(
     brand: { type: String, require: true },
     size: String,
     material: String,
-    product_shop: { type: Schema.Types.ObjectId, ref: "Shop" },
+    product_shop: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
     collection: "Clothes",
@@ -63,7 +63,7 @@ const electronicSchema = new Schema(
     manufacturer: { type: String, require: true },
     model: String,
     color: String,
-    product_shop: { type: Schema.Types.ObjectId, ref: "Shop" },
+    product_shop: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
     collection: "Electronics",
@@ -76,7 +76,7 @@ const furnitureSchema = new Schema(
     manufacturer: { type: String, require: true },
     model: String,
     color: String,
-    product_shop: { type: Schema.Types.ObjectId, ref: "Shop" },
+    product_shop: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
     collection: "Furniture",

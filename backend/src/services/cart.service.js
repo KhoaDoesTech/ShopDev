@@ -4,13 +4,14 @@ const { BadRequestError, NotFoundError } = require("../core/error.response");
 const { checkCartExists, createUserCart, updateUserCartQuantity } = require("../models/repositories/cart.repo");
 const cart = require("../models/cart.model");
 const { getProductById } = require("../models/repositories/product.repo");
+const { convertToObjectIdMongodb } = require("../utils");
 
 class CartService {
   static async addToCart({ userId, product = {} }) {
     // check cart exist
     const foundCart = await checkCartExists({
       model: cart,
-      filter: { cart_userId: userId },
+      filter: { cart_userId: convertToObjectIdMongodb(userId) },
     });
 
     if (!foundCart) {
@@ -70,7 +71,7 @@ class CartService {
   }
 
   static async deleteUserCart({ userId, productId }) {
-    const query = { cart_userId: userId, cart_state: "active" },
+    const query = { cart_userId: convertToObjectIdMongodb(userId), cart_state: "active" },
       updateSet = {
         $pull: {
           cart_products: {
@@ -85,7 +86,7 @@ class CartService {
   static async getListUserCart({ userId }) {
     return await cart
       .findOne({
-        cart_userId: +userId,
+        cart_userId: convertToObjectIdMongodb(userId),
       })
       .lean();
   }
