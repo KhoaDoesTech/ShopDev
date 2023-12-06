@@ -3,13 +3,13 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { getUserIdFromToken } from "../utils";
 
 const axiosClient = axios.create({
-  // baseURL: "http://localhost:3000/v1/api/",
-  baseURL: "http://localhost:3000",
+  baseURL: "http://localhost:3000/v1/api/",
+  // baseURL: "http://localhost:3000",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    // "x-api-key": import.meta.env.VITE_API_KEY || "",
+    "x-api-key": import.meta.env.VITE_API_KEY || "",
   },
 });
 

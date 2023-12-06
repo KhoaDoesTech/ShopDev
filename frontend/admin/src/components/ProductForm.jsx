@@ -53,7 +53,8 @@ const ProductForm = ({ record, isEditForm, methods }) => {
                 async () => {
                     try {
                         if (isEditForm) {
-                            var url = record.product_thumb
+                            var url = await getDownloadURL(uploadTask.snapshot.ref)
+                            // var url = record.product_thumb
                         }
                         else {
                             var url = await getDownloadURL(uploadTask.snapshot.ref)
