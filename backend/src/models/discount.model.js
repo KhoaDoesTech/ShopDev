@@ -28,7 +28,7 @@ const discountSchema = new Schema(
     // Xử lý ngầm
     discount_uses_count: { type: Number, require: true }, // Số discount đã sử dụng
     discount_users_used: { type: Array, default: [] }, // Ai đã sử dụng
-    discount_shopId: { type: Schema.Types.ObjectId, ref: "Shop" },
+    discount_shopId: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
     collection: COLLECTION_NAME,

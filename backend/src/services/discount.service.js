@@ -229,7 +229,7 @@ class DiscountService {
 
     const result = await discount.findByIdAndUpdate(foundDiscount._id, {
       $pull: {
-        discount_users_used: userId,
+        discount_users_used: convertToObjectIdMongodb(userId),
       },
       $inc: {
         discount_max_uses: 1,

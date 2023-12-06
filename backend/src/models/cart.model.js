@@ -14,11 +14,14 @@ const cartSchema = new Schema(
     },
     cart_products: { type: Array, require: true, default: [] },
     cart_count_product: { type: Number, default: 0 },
-    cart_userId: { type: Number, require: true },
+    cart_userId: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
     collection: COLLECTION_NAME,
-    timestamps: true,
+    timestamps: {
+      createdAt: "createdOn",
+      updatedAt: "modifiedOn",
+    },
   }
 );
 

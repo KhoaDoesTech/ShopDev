@@ -2,11 +2,11 @@
 
 const { model, Schema } = require("mongoose"); // Erase if already required
 
-const DOCUMENT_NAME = "Shop";
-const COLLECTION_NAME = "Shops";
+const DOCUMENT_NAME = "User";
+const COLLECTION_NAME = "Users";
 
 // Declare the Schema of the Mongo model
-const shopSchema = new Schema(
+const userSchema = new Schema(
   {
     name: {
       type: String,
@@ -43,4 +43,4 @@ const shopSchema = new Schema(
 );
 
 //Export the model
-module.exports = model(DOCUMENT_NAME, shopSchema);
+module.exports = model(DOCUMENT_NAME, userSchema);
