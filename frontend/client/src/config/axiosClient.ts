@@ -4,12 +4,10 @@ import { getUserIdFromToken } from "../utils";
 
 const axiosClient = axios.create({
   baseURL: "http://localhost:3000/v1/api/",
-  // baseURL: "http://localhost:3000",
-  timeout: 10000,
+  timeout: 15000,
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    "x-api-key": import.meta.env.VITE_API_KEY || "",
   },
 });
 
@@ -21,15 +19,10 @@ axiosClient.interceptors.request.use(
     if (!config?.headers) {
       throw new Error(`Expected 'config' and 'config.headers' not to be undefined`);
     }
-    if (token) {
-      // config.headers.Authorization = token;
-      config.headers["Content-Type"] = "application/json";
-      config.headers["x-api-key"] = import.meta.env.VITE_API_KEY;
-      // config.headers["x-client-id"] = getUserIdFromToken();
-    } else {
-      config.headers["Content-Type"] = "application/json";
-      config.headers["x-api-key"] = import.meta.env.VITE_API_KEY;
-    }
+    // config.headers.Authorization = token ?? "";
+    config.headers["Content-Type"] = "application/json";
+    config.headers["x-api-key"] = import.meta.env.VITE_API_KEY;
+    // config.headers["x-client-id"] = getUserIdFromToken() ?? "";
     return config;
   },
   function (error) {

@@ -15,7 +15,11 @@ const Login = () => {
   const dispatch = useDispatch();
   const { handleSubmit, control, formState: { errors } } = useForm();
   const onSubmit = async (data) => {
-    const response = await login(data);
+    const response = await login({
+      email: data.email,
+      password: data.password,
+      role: "SHOP"
+    });
     if (response.message === "OK") {
       toast.success('Đăng nhập thành công!')
       const token = response.metadata.tokens.accessToken

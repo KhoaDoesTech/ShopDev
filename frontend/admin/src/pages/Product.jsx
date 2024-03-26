@@ -84,20 +84,20 @@ const Product = () => {
       width: 200,
       render: (_, record) => (
         <div className="items-center">
-          <div className='py-1'>
-            <MdModeEdit onClick={() => {
-              setModalOpen(true);
-              setIsEditForm(true);
-              setProduct(record)
-            }} className='cursor-pointer hover:text-red-500 hover:scale-105 inline-block' />
+          <div className='cursor-pointer hover:text-red-500 hover:scale-105 inline-block' onClick={() => {
+            setModalOpen(true);
+            setIsEditForm(true);
+            setProduct(record)
+          }}>
+            <MdModeEdit className='cursor-pointer inline-block text-xl'/>
             <p className='inline-block px-2'>Chỉnh sửa</p>
           </div>
-          <div>
-            <BsTrash3Fill onClick={() => {
-              setDeleteModalOpen(true);
-              setIsEditForm(true);
-              setProduct(record)
-            }} className='cursor-pointer hover:text-red-500 hover:scale-105 inline-block' />
+          <div onClick={() => {
+            setDeleteModalOpen(true);
+            setIsEditForm(true);
+            setProduct(record)
+          }} className='cursor-pointer hover:text-red-500 hover:scale-105 inline-block'>
+            <BsTrash3Fill className='cursor-pointer inline-block text-xl'/>
             <p className='inline-block px-2'>Xóa sản phẩm</p>
           </div>
         </div>

@@ -8,7 +8,7 @@
   }
 }
 
-$color_1: rgba(255, 255, 255, 0.87);
+$color_1: rgba(109, 109, 109, 0.87);
 $color_2: #646cff;
 $color_3: #535bf2;
 $color_4: #213547;
@@ -148,6 +148,13 @@ button {
   padding-top: 4rem;
   padding: 1rem;
 }
+.add-to-cart {
+  transition: bottom 1s ease-in;
+  opacity: 0;
+  &:hover {
+    opacity: 1;
+  }
+}
 @media (prefers-color-scheme: light) {
   :root {
     color: $color_4;
@@ -165,4 +172,14 @@ button {
 .card {
   display: grid;
   grid-template-rows: 2fr 1fr 1fr;
+}
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  text-align: center;
 }

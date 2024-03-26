@@ -5,7 +5,7 @@ const token = localStorage.getItem('accessToken')
 const account = localStorage.getItem('account');
 const initialState = {
   isAuthenticated: !!token,
-  account
+  account: JSON.parse(account)
 }
 
 const authSlice = createSlice({
@@ -28,7 +28,7 @@ const authSlice = createSlice({
   }
 });
 
-export const shopSelector = (state: any) => state.auth.shop;
+export const accountSelector = (state: any) => state.auth.account;
 
 export const { setLogout, setLogin, setAccount } = authSlice.actions
 

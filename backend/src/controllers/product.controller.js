@@ -17,10 +17,14 @@ class ProductController {
   updateProduct = async (req, res, next) => {
     new SuccessResponse({
       message: "Update Product success!",
-      metadata: await ProductService.updateProduct(req.body.product_type, req.params.productId, {
-        ...req.body,
-        product_shop: req.user.userId,
-      }),
+      metadata: await ProductService.updateProduct(
+        req.body.product_type,
+        req.params.productId,
+        {
+          ...req.body,
+          product_shop: req.user.userId,
+        }
+      ),
     }).send(res);
   };
 
@@ -82,12 +86,28 @@ class ProductController {
       metadata: await ProductService.findAllProducts(req.query),
     }).send(res);
   };
-
+  findProductsByShopId = async (req, res, next) => {
+    const { product_shop } = req.query;
+    new SuccessResponse({
+      message: "Find products by shopId successful",
+      metadata: await ProductService.findProductsByShopId({
+        product_shop,
+      }),
+    });
+  };
   findProduct = async (req, res, next) => {
     new SuccessResponse({
       message: "findProduct success!",
       metadata: await ProductService.findProduct({
         product_id: req.params.product_id,
+      }),
+    }).send(res);
+  };
+  findProductBySlug = async (req, res, next) => {
+    new SuccessResponse({
+      message: "findProduct success!",
+      metadata: await ProductService.findProductBySlug({
+        product_slug: req.params.product_slug,
       }),
     }).send(res);
   };

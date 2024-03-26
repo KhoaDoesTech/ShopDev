@@ -11,7 +11,7 @@ const ProductForm = ({ record, isEditForm, methods }) => {
     const { handleSubmit, control, register, getValues, watch, reset, setValue } = useForm({
         defaultValues: null
     });
-    const values = getValues();
+    const product_thumb_url = getValues("product_thumb");
     watch();
     const handleReset = () => {
         reset();
@@ -25,7 +25,7 @@ const ProductForm = ({ record, isEditForm, methods }) => {
             }
         }
     }, [record, isEditForm])
-    console.log({ record, values, isEditForm })
+    console.log({ record, product_thumb_url, isEditForm })
     const onSubmit = (data) => {
         const key = 'creating';
         messageApi.open({
@@ -53,8 +53,9 @@ const ProductForm = ({ record, isEditForm, methods }) => {
                 async () => {
                     try {
                         if (isEditForm) {
-                            var url = await getDownloadURL(uploadTask.snapshot.ref)
-                            // var url = record.product_thumb
+                            var url = product_thumb_url instanceof File
+                                ? await getDownloadURL(uploadTask.snapshot.ref) 
+                                : record.product_thumb
                         }
                         else {
                             var url = await getDownloadURL(uploadTask.snapshot.ref)

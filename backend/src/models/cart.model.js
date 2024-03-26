@@ -1,29 +1,23 @@
-"use strict";
+const mongoose = require("mongoose");
 
-const { Schema, model } = require("mongoose"); // Erase if already required
-
-const DOCUMENT_NAME = "Cart";
-const COLLECTION_NAME = "Carts";
-
-// Declare the Schema of the Mongo model
-const cartSchema = new Schema(
-  {
-    cart_state: {
-      type: String,
-      enum: ["active", "completed", "failed", "pending"],
+const cartSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  items: [
+    {
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+      quantity: { type: Number, default: 1 },
+      select: {
+        type: Boolean,
+        default: false,
+      },
     },
-    cart_products: { type: Array, require: true, default: [] },
-    cart_count_product: { type: Number, default: 0 },
-    cart_userId: { type: Schema.Types.ObjectId, ref: "User" },
-  },
-  {
-    collection: COLLECTION_NAME,
-    timestamps: {
-      createdAt: "createdOn",
-      updatedAt: "modifiedOn",
-    },
-  }
-);
+  ],
+  createdAt: { type: Date, default: Date.now },
+});
 
-//Export the model
-module.exports = model(DOCUMENT_NAME, cartSchema);
+const Cart = mongoose.model("Cart", cartSchema);
+
+module.exports = Cart;

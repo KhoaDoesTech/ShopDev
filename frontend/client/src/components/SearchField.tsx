@@ -20,7 +20,7 @@ const SearchField: React.FC<SearchFieldProps> = ({
     setSearchValue(value);
 
     // Logic to generate suggestions (for demo, it's a static list)
-    const titleList = data.map((item) => item.title);
+    const titleList = data.map((item) => item.product_name);
     const filteredSuggestions = titleList.filter((suggestion) =>
       suggestion.toLowerCase().includes(value.toLowerCase())
     );
@@ -29,9 +29,8 @@ const SearchField: React.FC<SearchFieldProps> = ({
 
   const handleSuggestionClick = (value: string) => {
     setSearchValue(value);
-    const product = data.filter((item) => item.title === value);
-    console.log(product);
-    navigate(`/product/${product[0]?.id}`);
+    const product = data.filter((item) => item.product_name === value);
+    navigate(`/product/${product[0]?.product_slug}`);
     setSuggestions([]); // Clear suggestions when a suggestion is clicked
   };
 

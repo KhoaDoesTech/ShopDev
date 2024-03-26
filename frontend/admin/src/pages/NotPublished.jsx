@@ -83,12 +83,12 @@ const NotPublished = () => {
       key: 'action',
       width: 200,
       render: (_, record) => (
-        <div className='py-1'>
-          <BsArrow90DegLeft onClick={() => {
-            setDeleteModalOpen(true);
-            setIsEditForm(true);
-            setProduct(record)
-          }} className='cursor-pointer hover:text-red-500 hover:scale-105 inline-block' />
+        <div onClick={() => {
+          setDeleteModalOpen(true);
+          setIsEditForm(true);
+          setProduct(record)
+        }} className='cursor-pointer hover:text-red-500 hover:scale-105 inline-block'>
+          <BsArrow90DegLeft className='cursor-pointer inline-block text-xl' />
           <p className='inline-block px-2'>Mở bán sản phẩm</p>
         </div>
       ),

@@ -12,7 +12,12 @@ const SignUp = () => {
   const dispatch = useDispatch();
   const { handleSubmit, control, formState: { errors }, watch } = useForm();
   const onSubmit = async (data) => {
-    const response = await signup(data);
+    const response = await signup({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      role: "SHOP"
+    });
     if (response.status === 201) {
       toast.success('Đăng ký thành công!')
       toast.success('Quay về trang đăng nhập sau 3s..')
@@ -75,14 +80,14 @@ const SignUp = () => {
               defaultValue=""
               rules={{
                 required: 'Mật khẩu không được để trống.',
-                // minLength: {
-                //   value: 6,
-                //   message: 'Mật khẩu phải chứa ít nhất 6 ký tự.',
-                // },
-                // pattern: {
-                //   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-                //   message: 'Mật khẩu phải chứa chữ in hoa, in thường, ký tự đặc biệt và số.',
-                // },
+                minLength: {
+                  value: 6,
+                  message: 'Mật khẩu phải chứa ít nhất 6 ký tự.',
+                },
+                pattern: {
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+                  message: 'Mật khẩu phải chứa chữ in hoa, in thường, ký tự đặc biệt và số.',
+                },
               }}
               render={({ field }) => <input type="password" {...field} className="w-full p-2 border border-gray-300 rounded" />}
             />

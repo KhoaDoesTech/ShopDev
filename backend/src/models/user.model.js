@@ -2,6 +2,25 @@
 
 const { model, Schema } = require("mongoose"); // Erase if already required
 
+const AddressSchema = new Schema({
+  detailAddress: {
+    type: String,
+    required: true,
+  },
+  ward: {
+    type: String,
+    required: true,
+  },
+  district: {
+    type: String,
+    required: true,
+  },
+  province: {
+    type: String,
+    required: true,
+  },
+});
+
 const DOCUMENT_NAME = "User";
 const COLLECTION_NAME = "Users";
 
@@ -22,6 +41,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    phone: {
+      type: String,
+      required: false,
+    },
     status: {
       type: String,
       enum: ["active", "inactive"],
@@ -34,6 +57,10 @@ const userSchema = new Schema(
     roles: {
       type: Array,
       default: [],
+    },
+    address: {
+      type: AddressSchema,
+      required: false,
     },
   },
   {

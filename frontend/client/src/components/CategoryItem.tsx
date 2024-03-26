@@ -57,7 +57,7 @@ function CategoryItem(props: CategoryProps) {
         />
         <ImageHover className="image-hover object-cover w-full">
           <GradientBox $color={color} className="gradient-box">
-            <p className="text-3xl font-semibold">{label}</p>
+            <p className="text-3xl font-black text-white">{label}</p>
           </GradientBox>
           <img
             src={imageOnHover}

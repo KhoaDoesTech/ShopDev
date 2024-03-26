@@ -1,15 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const ProductEndpoint = {
-    // findAll: {
-    //     url: "/product/published/all",
-    //     method: "GET",
-    // },
     findAll: {
-        url: "/products",
+        url: "/product",
         method: "GET",
     },
+    findProductsByShopId: (shopId: string) => ({
+        url: `/product/product_shop`,
+        method: "GET",
+        params: {
+            product_shop: shopId
+        }
+    }),
     findById: (id: string) => ({
-        url: `/products/${id}`,
+        url: `/product/${id}`,
+        method: "GET",
+    }),
+    findBySlug: (slug: string) => ({
+        url: `/product/slug/${slug}`,
         method: "GET",
     }),
     createNewProduct: (data: any) => ({

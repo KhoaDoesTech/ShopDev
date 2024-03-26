@@ -7,22 +7,22 @@ export const routes = [
   {
     // element: <Dashboard />,
     path: "/",
-    label: "Dashboard",
+    label: "Trang chủ",
   },
   {
     // element: <Product />,
     path: "/product",
-    label: "Product",
+    label: "Sản phẩm",
   },
   {
     // element: <NotPublished />,
     path: "/nopublished",
-    label: "Not Published",
+    label: "Sản phẩm chưa mở bán",
   },
   {
     // element: <Order />,
     path: "/order",
-    label: "Order",
+    label: "Đơn hàng",
   },
   {
     // element: <Login />,

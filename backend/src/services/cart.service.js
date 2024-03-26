@@ -1,94 +1,59 @@
-"use strict";
-
-const { BadRequestError, NotFoundError } = require("../core/error.response");
-const { checkCartExists, createUserCart, updateUserCartQuantity } = require("../models/repositories/cart.repo");
-const cart = require("../models/cart.model");
-const { getProductById } = require("../models/repositories/product.repo");
-const { convertToObjectIdMongodb } = require("../utils");
+const CartRepository = require("../models/repositories/cart.repo");
 
 class CartService {
-  static async addToCart({ userId, product = {} }) {
-    // check cart exist
-    const foundCart = await checkCartExists({
-      model: cart,
-      filter: { cart_userId: convertToObjectIdMongodb(userId) },
-    });
-
-    if (!foundCart) {
-      // create cart for user
-      return await createUserCart({ userId, product });
+  constructor() {
+    this.cartRepository = new CartRepository();
+  }
+  async checkExistProduct(userId, productId) {
+    const cart = await this.cartRepository.getByUserId(userId);
+    const cartObject = cart ? JSON.parse(JSON.stringify(cart)) : null;
+    if (!cartObject) {
+      return false;
     }
 
-    // If have cart but not have product
-    if (!foundCart.cart_products.length) {
-      foundCart.cart_products = [product];
-      return await foundCart;
-    }
-
-    // Have product
-    return await updateUserCartQuantity({ userId, product });
+    const foundProduct = cartObject.items.find(
+      (item) => item.product._id === productId
+    );
+    console.log({ foundProduct });
+    return !!foundProduct;
+  }
+  async createCart(userId) {
+    return await this.cartRepository.create(userId);
+  }
+  async getCartByUserId(userId) {
+    return await this.cartRepository.getByUserId(userId);
+  }
+  async getCartById(cartId) {
+    return await this.cartRepository.getById(cartId);
   }
 
-  // update cart
-  /**
-    "shop_order_ids": [
-      {
-        shopId: ,
-        item_products: [
-            {
-                quantity,
-                price,
-                shopId,
-                old_quantity,
-                productId
-            }
-        ]
-        version
-      }
-    ]
-  */
-  static async addToCartV2({ userId, shop_order_ids = {} }) {
-    const { productId, quantity, old_quantity } = shop_order_ids[0]?.item_products[0];
-
-    const foundProduct = await getProductById(productId);
-    if (!foundProduct) throw new NotFoundError("Not found product");
-
-    if (foundProduct.product_shop.toString() !== shop_order_ids[0]?.shopId)
-      throw new NotFoundError("Product do not belong to the shop");
-
-    if (quantity === 0) {
-      // deleted
-      return await CartService.deleteUserCart({ userId, productId });
-    }
-
-    return await updateUserCartQuantity({
-      userId,
-      product: {
+  async updateEntireCart(userId, updatedCartData) {
+    const cart = await this.getCartByUserId(userId);
+    return await this.cartRepository.update(cart._id, updatedCartData);
+  }
+  async updateEachProduct(userId, productId, quantity, select) {
+    try {
+      const updated = await this.cartRepository.updateEachProduct(
+        userId,
         productId,
-        quantity: quantity - old_quantity,
-      },
-    });
+        quantity,
+        select
+      );
+      return updated;
+    } catch (error) {
+      throw new Error("Error updating cart product");
+    }
   }
-
-  static async deleteUserCart({ userId, productId }) {
-    const query = { cart_userId: convertToObjectIdMongodb(userId), cart_state: "active" },
-      updateSet = {
-        $pull: {
-          cart_products: {
-            productId,
-          },
-        },
-      };
-
-    return await cart.updateOne(query, updateSet);
+  async addItemToCart(cartId, newItem) {
+    return await this.cartRepository.addItem(cartId, newItem);
   }
-
-  static async getListUserCart({ userId }) {
-    return await cart
-      .findOne({
-        cart_userId: convertToObjectIdMongodb(userId),
-      })
-      .lean();
+  async deleteCart(userId) {
+    const cart = await this.getCartByUserId(userId);
+    return await this.cartRepository.deleteCartById(cart._id);
+  }
+  async removeItemFromCart(userId, productId) {
+    const cart = await this.getCartByUserId(userId);
+    return this.cartRepository.removeItemFromCart(cart._id, productId);
   }
 }
 

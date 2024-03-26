@@ -12,9 +12,6 @@ const Header = () => {
     <header className="bg-gray-400 text-white p-4 flex justify-end items-center w-full">
       <Popover placement="bottomLeft" content={
         <ul className="min-w-max">
-          <li className='menu-item'>
-            Profile
-          </li>
           <li className='menu-item' onClick={() => { dispatch(setLogout()); localStorage.removeItem("accessToken") }}>
             Đăng xuất
           </li>

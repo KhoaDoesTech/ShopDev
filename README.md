@@ -1,16 +1,19 @@
-# Shareandcare project
+# WEB BÁN HÀNG ONLINE
 
 #### Key Features:
+
 - Authentication based on JWT with RSA algorithm
 - Discount Services
 - Product Services
 
 #### Install packages
+
 ```
 npm install
 ```
 
 #### Setup .env file
+
 ```
 DEV_APP_PORT=
 DEV_DB_HOST=
@@ -26,6 +29,7 @@ NODE_ENV=
 ```
 
 #### Start the app
+
 ```
 npm run dev
 ```

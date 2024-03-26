@@ -19,7 +19,6 @@ function useLoading({ selector }: { selector: string }) {
       .on("progress", () => {
         loadedImages++;
         const percent = Math.floor((loadedImages / totalImages) * 100);
-        console.log(percent);
       })
       .on("done", () => {
         console.log("done");

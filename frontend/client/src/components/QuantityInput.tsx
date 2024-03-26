@@ -1,27 +1,68 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { decreaseCart, increaseCart } from "../store/reducer/product";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Cart } from "../interfaces";
+import { decreaseItem, increaseItem } from "../store/reducer/cart";
+import { useEffect } from "react";
+import {
+  checkProductExists,
+  createOrAddItem,
+  removeItemFromCart,
+  updateCartItem,
+} from "../api/services/cartService";
+import { accountSelector } from "../store/reducer/auth";
 
-const QuantityInput: React.FC = () => {
-  const [quantity, setQuantity] = useState<number>(0);
+interface QuantityInputProps {
+  cart: Cart;
+  quantity: number;
+  hasLabel: boolean;
+}
+const QuantityInput: React.FC<QuantityInputProps> = ({
+  cart,
+  quantity = 0,
+  hasLabel,
+}) => {
+  console.log({
+    cart,
+    quantity,
+    hasLabel,
+  });
   const dispatch = useDispatch();
-  const increaseQuantity = () => {
-    setQuantity(quantity + 1);
-    dispatch(increaseCart());
+  const account = useSelector(accountSelector);
+  const increaseQuantity = async () => {
+    const checkExistRes = await checkProductExists(
+      account._id,
+      cart.product._id
+    );
+
+    if (!checkExistRes) {
+      await createOrAddItem(cart);
+    }
+    dispatch(increaseItem(cart));
   };
 
   const decreaseQuantity = () => {
     if (quantity > 0) {
-      setQuantity(quantity - 1);
-      dispatch(decreaseCart());
+      dispatch(decreaseItem(cart));
     }
   };
+  useEffect(() => {
+    async function requestApi() {
+      await updateCartItem({
+        userId: account._id,
+        productId: cart.product._id,
+        quantity,
+      });
+    }
+    requestApi();
+  }, [account._id, cart.product._id, quantity]);
 
   return (
     <div className="flex items-center">
-      <label htmlFor="quantity" className="mr-2 text-gray-900">
-        Số lượng:
-      </label>
+      {hasLabel && (
+        <label htmlFor="quantity" className="mr-2 text-gray-900">
+          Số lượng:
+        </label>
+      )}
       <div className="flex items-center overflow-hidden h-8">
         <button
           onClick={decreaseQuantity}
